@@ -1,8 +1,15 @@
+
 'use strict';
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+
+var mongoose = require('mongoose');
+var jwt = require('jsonwebtoken');
+var config = require('./config');
+mongoose.connect(config.database);
+
 const log = require('./utils/Logger');
 
 var apiEndpoint = require('./routes/api');

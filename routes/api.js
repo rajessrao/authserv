@@ -1,16 +1,14 @@
 'use strict';
 
 var express = require('express');
-var postsEndpoint = require('./posts');
-var repoEndpoint = require('./repo/repo');
+var usersEndpoint = require('./users');
 
 var router = express.Router();
 
 //---------------------------------------------------------------
 // API Route specification
 //---------------------------------------------------------------
-router.use('/posts', postsEndpoint);
-router.use('/repo', repoEndpoint);
+router.use('/users', usersEndpoint);
 
 //---------------------------------------------------------------
 // Swagger API Specification - swagger-jsdoc
@@ -24,12 +22,12 @@ var options = {
 			description: 'Boilerplate API for ExpressJS based microservices',
 			version: '0.0.1',
 			contact: {
-				email: 'administrator@ashishdesai.com',
-				name: 'Mr. Doomsbuster'
+				email: '',
+				name: ''
 			},
 			license: {
 				name: 'Do what the fuck you want to (WTFPL)',
-				url: 'https://ashishdesai.com/license.txt'
+				url: ''
 			}
 		},
 		schemes: [
@@ -38,8 +36,8 @@ var options = {
 		],
 		basePath: '/api',
 		tags: [{
-			name: 'Posts',
-			description: 'Get details of posts'
+			name: 'Users',
+			description: 'Get details of users'
 		}, {
 			name: 'Repo',
 			description: 'Get details about repositories'
@@ -49,10 +47,10 @@ var options = {
 		}],
 		externalDocs: {
 			description: 'More information',
-			url: 'https://mrdoomsbuster.com'
+			url: ''
 		}
 	},
-	apis: ['routes/api.js', 'routes/posts.js', 'routes/repo/repo.js', 'routes/repo/images.js'],
+	apis: ['routes/api.js', 'routes/users.js'],
 };
 
 var swaggerSpec = swaggerJSDoc(options);
