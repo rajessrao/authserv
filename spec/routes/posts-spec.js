@@ -1,4 +1,4 @@
-'use strict'
+/* 'use strict'
 
 var sinon = require('sinon');
 var express = require('express');
@@ -39,4 +39,4 @@ describe('Route /posts', function() {
         })
 
     });
-})
+}) */

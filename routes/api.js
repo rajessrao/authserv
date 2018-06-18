@@ -18,15 +18,15 @@ var swaggerJSDoc = require('swagger-jsdoc');
 var options = {
 	swaggerDefinition: {
 		info: {
-			title: 'ExpressJS Boilerplate API',
-			description: 'Boilerplate API for ExpressJS based microservices',
+			title: 'Auth Service API',
+			description: 'Auth service API is ExpressJS based microservices',
 			version: '0.0.1',
 			contact: {
 				email: '',
 				name: ''
 			},
 			license: {
-				name: 'Do what the fuck you want to (WTFPL)',
+				name: '',
 				url: ''
 			}
 		},
@@ -38,12 +38,6 @@ var options = {
 		tags: [{
 			name: 'Users',
 			description: 'Get details of users'
-		}, {
-			name: 'Repo',
-			description: 'Get details about repositories'
-		}, {
-			name: 'Images',
-			description: 'Get details about images'
 		}],
 		externalDocs: {
 			description: 'More information',

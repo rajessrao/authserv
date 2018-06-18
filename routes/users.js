@@ -13,6 +13,35 @@ let sampleError = {
     messageCode: 1052 // Optional message code (numeric)
 };
 
+/**
+ * @swagger
+ * /authenticate:
+ *   post:
+ *     summary: Authenticate the user
+ *     description: Returns the token
+ *     tags:
+ *       - Authenticate
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: name
+ *         description: name of the user to fetch
+ *         in: body
+ *         required: true
+ *         type: string
+ *         example: rajesh
+ *       - name: password
+ *         description: password of the user to fetch
+ *         in: body
+ *         required: true
+ *         type: string
+ *         example: rajesh
+ *     responses:
+ *       200:
+ *         description: Successful
+ *       500:
+ *         description: Server Error
+ */
 router.post('/authenticate', function (req, res) {
     try {
         var promise = userService.getUser(req.body.name, req.body.password);
@@ -58,6 +87,22 @@ router.use(function (req, res, next) {
     }
 });
 
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     summary: Get all users
+ *     description: Returns all users with details
+ *     tags:
+ *       - Users
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Successful
+ *       500:
+ *         description: Server Error
+ */
 router.get('/', function (req, res) {
     try {
         var promise = userService.getAllUsers();
@@ -75,27 +120,6 @@ router.get('/', function (req, res) {
     } catch (e) {
         // Use a good logging framework for logging to file
         log.error('Route /users/ failed with error', e);
-        res.status(500).send(sampleError);
-    }
-});
-
-router.post('/user', function (req, res) {
-    // This route needs to be ordered before /:postId since express will match '/post' to be path param as well
-    var promise;
-    try {
-        promise = userService.getUser(req.body.name, req.body.password);
-
-        promise.then(function (data) {
-            // Do something (if required) with the data, then send it to the client
-            res.status(200).send(data);
-        });
-
-        promise.catch(function (error) {
-            // Never send stack traces to the client.
-            res.status(500).send(sampleError);
-        });
-    } catch (e) {
-        // Use a good logging framework for logging to file
         res.status(500).send(sampleError);
     }
 });
