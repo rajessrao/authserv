@@ -47,7 +47,7 @@ router.post('/authenticate', function (req, res) {
         var promise = userService.getUser(req.body.name, req.body.password);
 
         promise.then(function (data) {
-            var token = jwt.sign({ admin: data.admin }, config.secret, {
+            var token = jwt.sign({ name: data[0].name, isAdmin: data[0].admin }, config.secret, {
                 expiresIn: 1440 // expires in 24 hours
             });
             data = {
