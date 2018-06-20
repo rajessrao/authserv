@@ -10,6 +10,13 @@ module.exports = {
             }
         });
     },
+    changePwd: function (name, oldpassword, newpassword) {
+        User.update({ name: name, password: oldpassword }, { $set: { password: newpassword }}, function (err, user) {
+            if (!err) {
+                return user;
+            }
+        });
+    },
     getAllUsers: function () {
         let users = User.find({}, function (err, users) {
             return users;

@@ -175,4 +175,60 @@ router.get('/', function (req, res) {
     }
 });
 
+/**
+ * @swagger
+ * /users/changepwd:
+ *   post:
+ *     summary: change password of the user
+ *     description: Returns the user
+ *     tags:
+ *       - Users
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: name
+ *         description: name of the user to fetch
+ *         in: body
+ *         required: true
+ *         type: string
+ *         example: rajesh
+ *       - name: oldpassword
+ *         description: password of the user to fetch
+ *         in: body
+ *         required: true
+ *         type: string
+ *         example: rajesh
+ *       - name: newpassword
+ *         description: password of the user to fetch
+ *         in: body
+ *         required: true
+ *         type: string
+ *         example: rajesh
+ *     responses:
+ *       200:
+ *         description: Successful
+ *       500:
+ *         description: Server Error
+ */
+router.post('/changepwd', function (req, res) {
+    try {
+        var promise = userService.getUser(req.body.name, req.body.oldpassword);
+
+        promise.then(function (data) {
+            if (data) {
+                userService.changePwd(req.body.name, req.body.oldpassword, req.body.newpassword);
+                res.status(200).send({message: 'Password changed successfully.'});
+            }
+        });
+
+        promise.catch(function (error) {
+            log.error('Failed')
+            res.status(500).send(sampleError);
+        });
+    } catch (e) {
+        log.error('Route /users/ failed with error', e);
+        res.status(500).send(sampleError);
+    }
+});
+
 module.exports = router;
