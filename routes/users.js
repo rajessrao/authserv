@@ -15,12 +15,63 @@ let sampleError = {
 
 /**
  * @swagger
- * /authenticate:
+ * /users/register:
+ *   post:
+ *     summary: register the user
+ *     description: Returns the user
+ *     tags:
+ *       - Users
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: name
+ *         description: name of the user to fetch
+ *         in: body
+ *         required: true
+ *         type: string
+ *         example: rajesh
+ *       - name: password
+ *         description: password of the user to fetch
+ *         in: body
+ *         required: true
+ *         type: string
+ *         example: rajesh
+ *     responses:
+ *       200:
+ *         description: Successful
+ *       500:
+ *         description: Server Error
+ */
+router.post('/register', function (req, res) {
+    try {
+        // var promise = userService.createUser(req.body.name, req.body.password);
+        var promise = userService.getUser(req.body.name, req.body.password);
+
+        promise.then(function (data) {
+            if (data.length === 0) {
+                userService.createUser(req.body.name, req.body.password);
+                res.status(200).send({message: 'User registered successfully.'});
+            }
+        });
+
+        promise.catch(function (error) {
+            log.error('Failed')
+            res.status(500).send(sampleError);
+        });
+    } catch (e) {
+        log.error('Route /users/ failed with error', e);
+        res.status(500).send(sampleError);
+    }
+});
+
+/**
+ * @swagger
+ * /users/authenticate:
  *   post:
  *     summary: Authenticate the user
  *     description: Returns the token
  *     tags:
- *       - Authenticate
+ *       - Users
  *     produces:
  *       - application/json
  *     parameters:
