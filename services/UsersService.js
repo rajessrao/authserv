@@ -4,14 +4,14 @@ var config = require('../config');
 var jwt = require('jsonwebtoken');
 
 module.exports = {
-    createUser: function (name, password) {
-        const userRec = new User({ name: name, email: email, password: password, admin: false });
-        const user = userRec.save(function (err, user) {
+    createUser: function (name, email, password) {
+        const userRec = new User({ name: name, email: email, password: password });
+        userRec.save(function (err, user) {
             if (!err) {
-                return user;
+                userRec._id = user._id;
             }
         });
-        return user;
+        return userRec;
     },
     changePwd: function (email, oldpassword, newpassword) {
         const user = User.update({ email: email, password: oldpassword }, { $set: { password: newpassword } }, function (err, user) {
