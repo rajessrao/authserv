@@ -24,12 +24,18 @@ let sampleError = {
  *     produces:
  *       - application/json
  *     parameters:
+ *       - name: name
+ *         description: name of the user to fetch
+ *         in: body
+ *         required: true
+ *         type: string
+ *         example: rajesh
  *       - name: email
  *         description: email of the user to fetch
  *         in: body
  *         required: true
  *         type: string
- *         example: rajesh
+ *         example: rajesh@gmail.com
  *       - name: password
  *         description: password of the user to fetch
  *         in: body
