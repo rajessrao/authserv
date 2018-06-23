@@ -44,23 +44,22 @@ let sampleError = {
  */
 router.post('/register', function (req, res) {
     try {
-        // var promise = userService.createUser(req.body.email, req.body.password);
         var promise = userService.getUser(req.body.email, req.body.password);
 
         promise.then(function (data) {
             if (data.length === 0) {
-                userService.createUser(req.body.name, req.body.email, req.body.password);
-                res.status(200).send({message: 'User registered successfully.'});
+                const user = userService.createUser(req.body.name, req.body.email, req.body.password);
+                res.status(200).send({ user: user, message: 'User registered successfully.' });
             }
         });
 
         promise.catch(function (error) {
             log.error('Failed')
-            res.status(500).send(sampleError);
+            res.status(500).send(error);
         });
     } catch (e) {
         log.error('Route /users/ failed with error', e);
-        res.status(500).send(sampleError);
+        res.status(500).send(e);
     }
 });
 
@@ -98,7 +97,7 @@ router.post('/authenticate', function (req, res) {
         var promise = userService.getUser(req.body.email, req.body.password);
 
         promise.then(function (data) {
-            var token = jwt.sign({ email: data[0].email, isAdmin: data[0].admin }, config.secret, {
+            var token = jwt.sign({ email: data[0].email }, config.secret, {
                 expiresIn: 1440 // expires in 24 hours
             });
             data = {
@@ -111,32 +110,13 @@ router.post('/authenticate', function (req, res) {
 
         promise.catch(function (error) {
             log.error('Failed')
-            res.status(500).send(sampleError);
+            res.status(500).send(error);
         });
     } catch (e) {
         log.error('Route /users/ failed with error', e);
-        res.status(500).send(sampleError);
+        res.status(500).send(e);
     }
 });
-
-/* router.use(function (req, res, next) {
-    var token = req.body.token || req.query.token || req.headers['x-access-token'];
-    if (token) {
-        jwt.verify(token, config.secret, function (err, decoded) {
-            if (err) {
-                return res.json({ success: false, message: 'Failed to authenticate token.' });
-            } else {
-                req.decoded = decoded;
-                next();
-            }
-        });
-    } else {
-        return res.status(403).send({
-            success: false,
-            message: 'No token provided.'
-        });
-    }
-}); */
 
 /**
  * @swagger
@@ -156,22 +136,29 @@ router.post('/authenticate', function (req, res) {
  */
 router.get('/', function (req, res) {
     try {
-        var promise = userService.getAllUsers();
+        var token = req.body.token || req.query.token || req.headers['x-access-token'];
+        var tokenVerified = userService.verifyToken(token);
+        if (tokenVerified.success) {
+            var promise = userService.getAllUsers();
 
-        promise.then(function (data) {
-            // Do something (if required) with the data, then send it to the client
-            res.status(200).send(data);
-        });
+            promise.then(function (data) {
+                // Do something (if required) with the data, then send it to the client
+                res.status(200).send(data);
+            });
 
-        promise.catch(function (error) {
-            // Never send stack traces to the client.
-            log.error('Failed')
-            res.status(500).send(sampleError);
-        });
+            promise.catch(function (error) {
+                // Never send stack traces to the client.
+                log.error('Failed')
+                res.status(500).send(error);
+            });
+        } else {
+            log.error('Failed to authenticate token.')
+            res.status(500).send('Failed to authenticate token.');
+        }
     } catch (e) {
         // Use a good logging framework for logging to file
         log.error('Route /users/ failed with error', e);
-        res.status(500).send(sampleError);
+        res.status(500).send(e);
     }
 });
 
@@ -212,23 +199,49 @@ router.get('/', function (req, res) {
  */
 router.post('/changepwd', function (req, res) {
     try {
-        var promise = userService.getUser(req.body.email, req.body.oldpassword);
+        var token = req.body.token || req.query.token || req.headers['x-access-token'];
+        var tokenVerified = userService.verifyToken(token);
+        if (tokenVerified.success) {
+            var promise = userService.getUser(req.body.email, req.body.oldpassword);
 
-        promise.then(function (data) {
-            if (data) {
-                userService.changePwd(req.body.email, req.body.oldpassword, req.body.newpassword);
-                res.status(200).send({message: 'Password changed successfully.'});
-            }
-        });
+            promise.then(function (data) {
+                if (data) {
+                    userService.changePwd(req.body.email, req.body.oldpassword, req.body.newpassword);
+                    res.status(200).send({ message: 'Password changed successfully.' });
+                }
+            });
 
-        promise.catch(function (error) {
-            log.error('Failed')
-            res.status(500).send(sampleError);
-        });
+            promise.catch(function (error) {
+                log.error('Failed')
+                res.status(500).send(error);
+            });
+        } else {
+            log.error('Failed to authenticate token.')
+            res.status(500).send('Failed to authenticate token.');
+        }
     } catch (e) {
         log.error('Route /users/ failed with error', e);
-        res.status(500).send(sampleError);
+        res.status(500).send(e);
     }
 });
 
 module.exports = router;
+
+/* router.use(function (req, res, next) {
+    var token = req.body.token || req.query.token || req.headers['x-access-token'];
+    if (token) {
+        jwt.verify(token, config.secret, function (err, decoded) {
+            if (err) {
+                return res.json({ success: false, message: 'Failed to authenticate token.' });
+            } else {
+                req.decoded = decoded;
+                next();
+            }
+        });
+    } else {
+        return res.status(403).send({
+            success: false,
+            message: 'No token provided.'
+        });
+    }
+}); */
