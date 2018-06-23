@@ -24,8 +24,8 @@ let sampleError = {
  *     produces:
  *       - application/json
  *     parameters:
- *       - name: name
- *         description: name of the user to fetch
+ *       - name: email
+ *         description: email of the user to fetch
  *         in: body
  *         required: true
  *         type: string
@@ -44,12 +44,12 @@ let sampleError = {
  */
 router.post('/register', function (req, res) {
     try {
-        // var promise = userService.createUser(req.body.name, req.body.password);
-        var promise = userService.getUser(req.body.name, req.body.password);
+        // var promise = userService.createUser(req.body.email, req.body.password);
+        var promise = userService.getUser(req.body.email, req.body.password);
 
         promise.then(function (data) {
             if (data.length === 0) {
-                userService.createUser(req.body.name, req.body.password);
+                userService.createUser(req.body.name, req.body.email, req.body.password);
                 res.status(200).send({message: 'User registered successfully.'});
             }
         });
@@ -75,8 +75,8 @@ router.post('/register', function (req, res) {
  *     produces:
  *       - application/json
  *     parameters:
- *       - name: name
- *         description: name of the user to fetch
+ *       - name: email
+ *         description: email of the user to fetch
  *         in: body
  *         required: true
  *         type: string
@@ -95,10 +95,10 @@ router.post('/register', function (req, res) {
  */
 router.post('/authenticate', function (req, res) {
     try {
-        var promise = userService.getUser(req.body.name, req.body.password);
+        var promise = userService.getUser(req.body.email, req.body.password);
 
         promise.then(function (data) {
-            var token = jwt.sign({ name: data[0].name, isAdmin: data[0].admin }, config.secret, {
+            var token = jwt.sign({ email: data[0].email, isAdmin: data[0].admin }, config.secret, {
                 expiresIn: 1440 // expires in 24 hours
             });
             data = {
@@ -119,7 +119,7 @@ router.post('/authenticate', function (req, res) {
     }
 });
 
-router.use(function (req, res, next) {
+/* router.use(function (req, res, next) {
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
     if (token) {
         jwt.verify(token, config.secret, function (err, decoded) {
@@ -136,7 +136,7 @@ router.use(function (req, res, next) {
             message: 'No token provided.'
         });
     }
-});
+}); */
 
 /**
  * @swagger
@@ -186,8 +186,8 @@ router.get('/', function (req, res) {
  *     produces:
  *       - application/json
  *     parameters:
- *       - name: name
- *         description: name of the user to fetch
+ *       - name: email
+ *         description: email of the user to fetch
  *         in: body
  *         required: true
  *         type: string
@@ -212,11 +212,11 @@ router.get('/', function (req, res) {
  */
 router.post('/changepwd', function (req, res) {
     try {
-        var promise = userService.getUser(req.body.name, req.body.oldpassword);
+        var promise = userService.getUser(req.body.email, req.body.oldpassword);
 
         promise.then(function (data) {
             if (data) {
-                userService.changePwd(req.body.name, req.body.oldpassword, req.body.newpassword);
+                userService.changePwd(req.body.email, req.body.oldpassword, req.body.newpassword);
                 res.status(200).send({message: 'Password changed successfully.'});
             }
         });
