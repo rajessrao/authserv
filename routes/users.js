@@ -15,6 +15,50 @@ let sampleError = {
 
 /**
  * @swagger
+ * /users:
+ *   get:
+ *     summary: Get all users
+ *     description: Returns all users with details
+ *     tags:
+ *       - Users
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Successful
+ *       500:
+ *         description: Server Error
+ */
+router.get('/', function (req, res) {
+    try {
+        var token = req.body.token || req.query.token || req.headers['x-access-token'];
+        var tokenVerified = userService.verifyToken(token);
+        if (tokenVerified.success) {
+            var promise = userService.getAllUsers();
+
+            promise.then(function (data) {
+                // Do something (if required) with the data, then send it to the client
+                res.status(200).send(data);
+            });
+
+            promise.catch(function (error) {
+                // Never send stack traces to the client.
+                log.error('Failed')
+                res.status(500).send(error);
+            });
+        } else {
+            log.error('Failed to authenticate token.')
+            res.status(500).send('Failed to authenticate token.');
+        }
+    } catch (e) {
+        // Use a good logging framework for logging to file
+        log.error('Route /users/ failed with error', e);
+        res.status(500).send(e);
+    }
+});
+
+/**
+ * @swagger
  * /users/register:
  *   post:
  *     summary: register the user
@@ -119,50 +163,6 @@ router.post('/authenticate', function (req, res) {
             res.status(500).send(error);
         });
     } catch (e) {
-        log.error('Route /users/ failed with error', e);
-        res.status(500).send(e);
-    }
-});
-
-/**
- * @swagger
- * /users:
- *   get:
- *     summary: Get all users
- *     description: Returns all users with details
- *     tags:
- *       - Users
- *     produces:
- *       - application/json
- *     responses:
- *       200:
- *         description: Successful
- *       500:
- *         description: Server Error
- */
-router.get('/', function (req, res) {
-    try {
-        var token = req.body.token || req.query.token || req.headers['x-access-token'];
-        var tokenVerified = userService.verifyToken(token);
-        if (tokenVerified.success) {
-            var promise = userService.getAllUsers();
-
-            promise.then(function (data) {
-                // Do something (if required) with the data, then send it to the client
-                res.status(200).send(data);
-            });
-
-            promise.catch(function (error) {
-                // Never send stack traces to the client.
-                log.error('Failed')
-                res.status(500).send(error);
-            });
-        } else {
-            log.error('Failed to authenticate token.')
-            res.status(500).send('Failed to authenticate token.');
-        }
-    } catch (e) {
-        // Use a good logging framework for logging to file
         log.error('Route /users/ failed with error', e);
         res.status(500).send(e);
     }
