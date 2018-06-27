@@ -1,0 +1,5 @@
+{"level":"info","message":"Starting the express app","timestamp":"2018-06-24T06:17:29.619Z"}
+{"level":"info","message":"Started the express microservice.","timestamp":"2018-06-24T06:17:29.696Z"}
+{"level":"error","message":"Failed to authenticate token.","timestamp":"2018-06-24T06:20:21.085Z"}
+{"level":"info","message":"Starting the express app","timestamp":"2018-06-24T06:26:51.399Z"}
+{"level":"info","message":"Started the express microservice.","timestamp":"2018-06-24T06:26:51.461Z"}

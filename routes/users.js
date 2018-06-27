@@ -12,6 +12,41 @@ let sampleError = {
     message: 'Error occured',
     messageCode: 1052 // Optional message code (numeric)
 };
+let User = {
+    firstName: '',
+    lastName: '',
+    designation: '',
+    organisation: '',
+    phone: 0,
+    addressLine1: '',
+    addressLine2: '',
+    landMark: '',
+    city: '',
+    state: '',
+    country: '',
+    pincode: 0,
+    email: '',
+    password: '',
+    admin: false,
+    adminType: ''
+};
+
+function clearUserRecord() {
+    User.firstName = '';
+    User.lastName = '';
+    User.designation = '';
+    User.organisation = '';
+    User.phone = 0;
+    User.addressLine1 = '';
+    User.addressLine2 = '';
+    User.landMark = '';
+    User.city = '';
+    User.state = '';
+    User.country = '';
+    User.pincode = 0;
+    User.email = '';
+    User.password = '';
+}
 
 /**
  * @swagger
@@ -98,7 +133,24 @@ router.post('/register', function (req, res) {
 
         promise.then(function (data) {
             if (data.length === 0) {
-                const user = userService.createUser(req.body.name, req.body.email, req.body.password);
+
+                User.firstName = req.body.firstName;
+                User.lastName = req.body.lastName;
+                User.designation = req.body.designation;
+                User.organisation = req.body.organisation;
+                User.phone = req.body.phone;
+                User.addressLine1 = req.body.addressLine1;
+                User.addressLine2 = req.body.addressLine2;
+                User.landMark = req.body.landMark;
+                User.city = req.body.city;
+                User.state = req.body.state;
+                User.country = req.body.country;
+                User.pincode = req.body.pincode;
+                User.email = req.body.email;
+                User.password = req.body.password;
+
+                const user = userService.createUser(User);
+                clearUserRecord();
                 res.status(200).send({ user: user, message: 'User registered successfully.' });
             }
         });
@@ -147,7 +199,7 @@ router.post('/authenticate', function (req, res) {
         var promise = userService.getUser(req.body.email, req.body.password);
 
         promise.then(function (data) {
-            var token = jwt.sign({ email: data[0].email }, config.secret, {
+            var token = jwt.sign({ user: data[0] }, config.secret, {
                 expiresIn: 1440 // expires in 24 hours
             });
             data = {

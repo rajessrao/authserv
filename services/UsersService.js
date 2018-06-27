@@ -4,8 +4,8 @@ var config = require('../config');
 var jwt = require('jsonwebtoken');
 
 module.exports = {
-    createUser: function (name, email, password) {
-        const userRec = new User({ name: name, email: email, password: password });
+    createUser: function (newUser) {
+        const userRec = new User(newUser);
         userRec.save(function (err, user) {
             if (!err) {
                 userRec._id = user._id;
@@ -22,7 +22,7 @@ module.exports = {
         return user;
     },
     getAllUsers: function () {
-        const users = User.find({}, { _id: true, name: true, email: true}, function (err, users) {
+        const users = User.find({}, { _id: true, firstName: true, lastName: true, designation: true, organisation: true, phone: true, addressLine1: true, addressLine2: true, landMark: true, city: true, state: true, country: true, pincode: true, email: true, admin: true, adminType: true }, function (err, users) {
             if (!err) {
                 return users;
             }
@@ -30,7 +30,7 @@ module.exports = {
         return users;
     },
     getUser: function (email, password) {
-        const user = User.find({ email: email, password: password }, function (err, users) {
+        const user = User.find({ email: email, password: password }, { _id: true, firstName: true, lastName: true, designation: true, organisation: true, phone: true, addressLine1: true, addressLine2: true, landMark: true, city: true, state: true, country: true, pincode: true, email: true, admin: true, adminType: true }, function (err, users) {
             if (!err) {
                 return users;
             }
