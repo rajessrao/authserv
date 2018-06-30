@@ -17,6 +17,10 @@ var apiEndpoint = require('./routes/api');
 log.info('Starting the express app');
 var app = express();
 
+//Setup DB Data, remove it later
+var dbSetup = require('./dataSetup/setup');
+//Setup end
+
 // view engine setup
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));
@@ -66,6 +70,10 @@ app.use(function (err, req, res, next) {
 
 app.listen(process.env.PORT || 3000, function () {
     log.info('Started the express microservice.');
+    // Setup DB Data, remove it later
+    // Comment below when not needed
+    dbSetup.init();
+    // Setup end
 });
 
 module.exports = app;
