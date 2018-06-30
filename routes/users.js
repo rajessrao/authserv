@@ -204,7 +204,7 @@ router.post('/authenticate', function (req, res) {
             });
             data = {
                 success: true,
-                message: 'Enjoy your token!',
+                user: data[0],
                 token: token
             };
             res.status(200).send(data);
