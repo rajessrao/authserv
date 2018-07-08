@@ -1,6 +1,7 @@
 
 'use strict';
 var express = require('express');
+var cors = require('cors');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -29,6 +30,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: false
 }));
+
+var originsWhitelist = [
+    'http://localhost:4200'
+];
+var corsOptions = {
+    origin: function (origin, callback) {
+        var isWhitelisted = originsWhitelist.indexOf(origin) !== -1;
+        callback(null, isWhitelisted);
+    },
+    credentials: true
+}
+app.use(cors(corsOptions));
 
 app.use(cookieParser());
 
